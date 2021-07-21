@@ -69,6 +69,7 @@ void Connection::reset()
   state_ = STATE_PARSE_URI;
   hState_ = H_START;
   headers_.clear();
+  args_.clear();
 
  seperateTimer();
 }
@@ -236,9 +237,10 @@ void Connection::handleConn() {
 
 URIState Connection::parseURI()
 {
+  
     string &str = inBuffer_;
   string cop = str;
-  size_t pos = str.find('\r', nowReadPos_);
+  int pos = str.find('\r', nowReadPos_);
   if (pos < 0) {
     return PARSE_URI_AGAIN;
   }
@@ -270,15 +272,29 @@ URIState Connection::parseURI()
     HTTPVersion_ = HTTP_11;
     return PARSE_URI_SUCCESS;
   } else {
-    size_t _pos = request_line.find(' ', pos);
+    int _pos = request_line.find(' ', pos);
     if (_pos < 0)
       return PARSE_URI_ERROR;
     else {
       if (_pos - pos > 1) {
         fileName_ = request_line.substr(pos + 1, _pos - pos - 1);
-        size_t __pos = fileName_.find('?');
+        int __pos = fileName_.find('?');
         if (__pos >= 0) {
           fileName_ = fileName_.substr(0, __pos);
+          __pos=request_line.find('?');
+          ++__pos;
+          int pos_e;
+          int pos_a;
+          while((pos_e=request_line.find('=',__pos))>=0)
+          {
+            if((pos_a=request_line.find('&',__pos))>=0||(pos_a=request_line.find(' ',__pos))>=0)
+                 args_[request_line.substr(__pos,pos_e-__pos)]=request_line.substr(pos_e+1,pos_a-pos_e-1);
+            else
+            return PARSE_URI_ERROR;
+            __pos=pos_a+1;
+          }
+          for(auto & ele:args_)
+           cout<<ele.first<<':'<<ele.second<<endl;
         }
       }
 

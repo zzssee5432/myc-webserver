@@ -83,9 +83,13 @@ void eventloop::loop() {
   while (!quit_) {
     ret.clear();
     ret = poller_->poll();
+    
     eventHandling_ = true;
     
-    for (auto& it : ret) it->handleEvents();
+    for (auto& it : ret) 
+    {it->handleEvents();
+    
+    }
     
     eventHandling_ = false;
 

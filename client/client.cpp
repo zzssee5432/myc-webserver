@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   char buff[4096];
   buff[0] = '\0';
   
- const char* p = "POST 127.0.0.1:1234/hello HTTP/1.1\r\nUser-Agent: test\r\nContent-length: 15\r\nHost: 127.0.0.1\r\nConnection: Keep-Alive\r\n\r\nreceive content";
+ const char* p = "POST 127.0.0.1:1234/hello?arg1=1&arg2=2 HTTP/1.1\r\nUser-Agent: test\r\nContent-length: 15\r\nHost: 127.0.0.1\r\nConnection: Keep-Alive\r\n\r\nreceive content";
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) == 0) {
     ssize_t n = write(sockfd, p, strlen(p));
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
     perror("err3");
   }
 
- p = "POST 127.0.0.1:1234/hello HTTP/1.1\r\nUser-Agent: test\r\nContent-length: 19\r\nHost: 127.0.0.1\r\nConnection: Keep-Alive\r\n\r\nnew receive content";
+ p = "POST 127.0.0.1:1234/hello?arg3=3&arg4=4 HTTP/1.1\r\nUser-Agent: test\r\nContent-length: 19\r\nHost: 127.0.0.1\r\nConnection: Keep-Alive\r\n\r\nnew receive content";
  ssize_t n = write(sockfd, p, strlen(p));
     cout << "strlen(p) = " << strlen(p) << endl;
     sleep(10);

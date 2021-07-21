@@ -55,7 +55,7 @@ int parse_URI();
   void setConnHandler(CallBack &&connHandler) { connHandler_ = connHandler; }
 
   void handleEvents() {
-   
+  
     events_ = 0;
     if ((revents_ & EPOLLHUP) && !(revents_ & EPOLLIN)) {
       events_ = 0;
@@ -68,7 +68,6 @@ int parse_URI();
     }
     if (revents_ & (EPOLLIN | EPOLLPRI | EPOLLRDHUP)) {
       handleRead();
-  
     }
     if (revents_ & EPOLLOUT) {
       handleWrite();

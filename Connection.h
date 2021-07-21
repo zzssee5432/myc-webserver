@@ -27,6 +27,10 @@ enum URIState {
   PARSE_URI_SUCCESS,
 };
 
+
+
+
+
 enum HeaderState {
   PARSE_HEADER_SUCCESS = 1,
   PARSE_HEADER_AGAIN,
@@ -101,13 +105,14 @@ class Connection : public std::enable_shared_from_this<Connection> {
   ParseState hState_;
   bool keepAlive_;
   std::map<std::string, std::string> headers_;
+  std::map<std::string, std::string> args_;
   std::weak_ptr<Timer> timer_;
 
   void handleRead();
   void handleWrite();
   void handleConn();
   void handleError(int fd, int err_num, std::string short_msg);
-  URIState parseURI();
+  URIState  parseURI();
   HeaderState parseHeaders();
   AnalysisState analysisRequest();
 };
