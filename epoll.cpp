@@ -76,7 +76,7 @@ std::vector<std::shared_ptr<Channel>> Epoll::poll()
 {
 
    while (true) {
-     cout<<"wait"<<endl;
+     //cout<<"wait"<<endl;
     int event_count =
         epoll_wait(epollFd_, &*events_.begin(), events_.size(), EPOLLWAIT_TIME);
     if (event_count < 0) perror("epoll wait error");

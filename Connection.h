@@ -75,7 +75,7 @@ class Connection : public std::enable_shared_from_this<Connection> {
  public:
  Connection(eventloop *loop, int connfd);
   ~Connection() { 
-    cout<<"~Connection"<<endl;
+   //cout<<"~Connection"<<endl;
     close(fd_); }
   void reset();
   void seperateTimer();

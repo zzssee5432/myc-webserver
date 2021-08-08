@@ -54,7 +54,7 @@ std::string request_type::gettype(const std::string &req_type)
  nowReadPos_(0)
  {
 
-   cout<<"Connection"<<endl;
+   //cout<<"Connection"<<endl;
   channel_->setReadHandler(bind(&Connection::handleRead, this));
   channel_->setWriteHandler(bind(&Connection::handleWrite, this));
   channel_->setConnHandler(bind(&Connection::handleConn, this));
@@ -156,7 +156,7 @@ void Connection::seperateTimer()
         break;
       }
       inBuffer_=inBuffer_.substr(content_length);
-      cout<<inBuffer_<<endl;
+     // cout<<inBuffer_<<endl;
       state_ = STATE_ANALYSIS;
     }
     if (state_ == STATE_ANALYSIS) {
@@ -170,7 +170,7 @@ void Connection::seperateTimer()
       }
     }
   } while (false);
-  cout<<"error:"<<error_<<endl;
+ // cout<<"error:"<<error_<<endl;
   if (!error_) {
     if (outBuffer_.size() > 0) {
       handleWrite();
@@ -189,7 +189,7 @@ void Connection::seperateTimer()
 
 
 void Connection::handleWrite() {
-  cout<<"begin write"<<endl;
+  //cout<<"begin write"<<endl;
   if (!error_ && connectionState_ != H_DISCONNECTED) {
     __uint32_t &events_ = channel_->getEvents();
     if (writen(fd_, outBuffer_) < 0) {
@@ -217,12 +217,12 @@ void Connection::handleConn() {
       loop_->updatePoller(channel_, timeout);
 
     } else if (keepAlive_) {
-      cout<<"keep alive"<<endl;
+      //cout<<"keep alive"<<endl;
       events_ |= (EPOLLIN | EPOLLET);
       int timeout = DEFAULT_KEEP_ALIVE_TIME;
       loop_->updatePoller(channel_, timeout);
     } else {
-      cout<<"shutdown"<<endl;
+     // cout<<"shutdown"<<endl;
       loop_->shutdown(channel_);
        loop_->runInLoop(bind(&Connection::handleClose, shared_from_this()));
     }
@@ -296,8 +296,8 @@ URIState Connection::parseURI()
           }
             __pos=pos_a+1;
           }
-          for(auto & ele:args_)
-           cout<<ele.first<<':'<<ele.second<<endl;
+         // for(auto & ele:args_)
+          // cout<<ele.first<<':'<<ele.second<<endl;
         }
       }
 
@@ -410,7 +410,7 @@ HeaderState Connection::parseHeaders() {
   }
   if (hState_ == H_END_LF) {
       str = str.substr(i);
-      cout<<"str:"<<str<<endl;
+      //cout<<"str:"<<str<<endl;
     return PARSE_HEADER_SUCCESS;
   }
   str = str.substr(now_read_line_begin);
