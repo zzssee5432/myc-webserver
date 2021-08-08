@@ -87,6 +87,7 @@ void Connection::seperateTimer()
 
 
  void Connection::handleRead() {
+
   __uint32_t &events_ = channel_->getEvents();
   
   do {
@@ -116,7 +117,7 @@ void Connection::seperateTimer()
       if (flag == PARSE_URI_AGAIN)
         break;
       else if (flag == PARSE_URI_ERROR) {
-        perror("2");
+        perror("4");
         inBuffer_.clear();
         error_ = true;
         handleError(fd_, 400, "Bad Request");
@@ -144,7 +145,6 @@ void Connection::seperateTimer()
       int content_length = -1;
       if (headers_.find("Content-length") != headers_.end()) {
         content_length = stoi(headers_["Content-length"]);
-        cout<<content_length<<endl;
       } else {
         error_ = true;
         handleError(fd_, 400, "Bad Request: Lack of argument (Content-length)");
@@ -152,10 +152,11 @@ void Connection::seperateTimer()
       }
       if (static_cast<int>(inBuffer_.size()) < content_length) 
       {
-          cout<<inBuffer_.size()<<endl;
+      
         break;
       }
       inBuffer_=inBuffer_.substr(content_length);
+      cout<<inBuffer_<<endl;
       state_ = STATE_ANALYSIS;
     }
     if (state_ == STATE_ANALYSIS) {
@@ -178,7 +179,7 @@ void Connection::seperateTimer()
     if (!error_ && state_ == STATE_FINISH) {
       this->reset();
       if (inBuffer_.size() > 0) {
-    
+
         if (connectionState_ != H_DISCONNECTING) handleRead();
       }
     } else if (!error_ && connectionState_ != H_DISCONNECTED)
@@ -206,7 +207,6 @@ void Connection::handleConn() {
   __uint32_t &events_ = channel_->getEvents();
   if (!error_ && connectionState_ == H_CONNECTED) {
     if (events_ != 0) {
-      cout<<"not over"<<endl;
       int timeout = DEFAULT_EXPIRED_TIME;
       if (keepAlive_) timeout = DEFAULT_KEEP_ALIVE_TIME;
       if ((events_ & EPOLLIN) && (events_ & EPOLLOUT)) {
@@ -228,7 +228,7 @@ void Connection::handleConn() {
     }
   } else if (!error_ && connectionState_ == H_DISCONNECTING &&
              (events_ & EPOLLOUT)) {
-               cout<<"continue write"<<endl;
+
     events_ = (EPOLLOUT | EPOLLET);
   } else {
     loop_->runInLoop(bind(&Connection::handleClose, shared_from_this()));
@@ -274,7 +274,8 @@ URIState Connection::parseURI()
   } else {
     int _pos = request_line.find(' ', pos);
     if (_pos < 0)
-      return PARSE_URI_ERROR;
+   { 
+      return PARSE_URI_ERROR;}
     else {
       if (_pos - pos > 1) {
         fileName_ = request_line.substr(pos + 1, _pos - pos - 1);
@@ -290,7 +291,9 @@ URIState Connection::parseURI()
             if((pos_a=request_line.find('&',__pos))>=0||(pos_a=request_line.find(' ',__pos))>=0)
                  args_[request_line.substr(__pos,pos_e-__pos)]=request_line.substr(pos_e+1,pos_a-pos_e-1);
             else
+          { 
             return PARSE_URI_ERROR;
+          }
             __pos=pos_a+1;
           }
           for(auto & ele:args_)
@@ -306,7 +309,9 @@ URIState Connection::parseURI()
 
   pos = request_line.find("/", pos);
   if (pos < 0)
+  {
     return PARSE_URI_ERROR;
+  }
   else {
     if (request_line.size() - pos <= 3)
       return PARSE_URI_ERROR;
@@ -394,7 +399,6 @@ HeaderState Connection::parseHeaders() {
           hState_ = H_END_LF;
         } else
           return PARSE_HEADER_ERROR;
-        break;
       }
       case H_END_LF: {
         notFinish = false;
@@ -405,8 +409,8 @@ HeaderState Connection::parseHeaders() {
     }
   }
   if (hState_ == H_END_LF) {
-    if(str.size()>0)
-      str = str.substr(now_read_line_begin);
+      str = str.substr(i);
+      cout<<"str:"<<str<<endl;
     return PARSE_HEADER_SUCCESS;
   }
   str = str.substr(now_read_line_begin);
